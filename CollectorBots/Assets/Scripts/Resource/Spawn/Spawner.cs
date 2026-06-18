@@ -5,10 +5,11 @@ using UnityEngine.Pool;
 
 public class Spawner : MonoBehaviour
 {
-    private const float Delay = 3f;
+    private const float Delay = 1f;
 
     [SerializeField] private RandomPositionGenerator _position;
     [SerializeField] private List<ResourceSpawnConfig> _configs;
+    [SerializeField] private Transform _resourceContainer;
 
     private WaitForSeconds _wait = new WaitForSeconds(Delay);
 
@@ -25,7 +26,7 @@ public class Spawner : MonoBehaviour
         foreach (var config in _configs)
         {
             ObjectPool<Resource> pool = new ObjectPool<Resource>(
-                createFunc: () => Instantiate(config.Prefab),
+                createFunc: () => Instantiate(config.Prefab, _resourceContainer),
                 actionOnGet: (resource) => PrepareObject(resource),
             actionOnRelease: (resource) => resource.gameObject.SetActive(false),
             actionOnDestroy: (resource) => Destroy(resource.gameObject),

@@ -18,6 +18,22 @@ public class ResourceStorage : MonoBehaviour, IResourceStorage
         return _minValue;
     }
 
+    //списать ресурсы
+    public void RemoveResource(ResourceType type, int amount)
+    {
+        for (int i = 0; i < _storage.Count; i++)
+        {
+            if (_storage[i].Type == type)
+            {
+                ResourceEntry resource = _storage[i];
+                resource.Amount -= amount;
+                _storage[i] = resource;
+                return;
+            }
+        }
+    }
+
+    //добавить ресурсы
     public void AddResource(ResourceType type, int amount)
     {
         for (int i = 0; i < _storage.Count; i++)

@@ -3,5 +3,5 @@ using UnityEngine;
 
 public interface IResourceSelectionStrategy
 {
-    Resource SelectResource(Vector3 collectorPosition, List<Resource> availableResources);
+    Resource SelectResource(Vector3 collectorPosition, IReadOnlyList<Resource> availableResources);
 }

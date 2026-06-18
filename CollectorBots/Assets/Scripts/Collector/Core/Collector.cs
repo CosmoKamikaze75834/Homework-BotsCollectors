@@ -13,6 +13,8 @@ public class Collector : MonoBehaviour
 
     private Vector3 _startPosition;
 
+    private Base _ownerBase;//база к которой бот усыновлен
+
     public Transform Target { get; private set; }
     public bool IsBusy { get; private set; }
 
@@ -76,4 +78,6 @@ public class Collector : MonoBehaviour
     public void Stop() => _movement.Stop();
 
     public void Resume() => _movement.Resume();
+
+    public void SetOwner(Base ownerBase) => _ownerBase = ownerBase;
 }

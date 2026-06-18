@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class DistributorResources : MonoBehaviour
 {
-    [SerializeField] private Collector[] _collectors;
+    [SerializeField] private List<Collector> _collectors;
     [SerializeField] private ResourceAssignmentStrategyFactory _strategyFactory;
     [SerializeField] private ResourceRepository _resourceRepository;
 
@@ -13,7 +13,7 @@ public class DistributorResources : MonoBehaviour
 
     public void Distribute()
     {
-        List<Resource> availableResources = (List<Resource>)_resourceRepository.GetAvailableResources();
+        var availableResources = _resourceRepository.GetAvailableResources();
 
         if (availableResources.Count == 0)
             return;
@@ -21,9 +21,9 @@ public class DistributorResources : MonoBehaviour
         AssignTasksToCollectors(availableResources);
     }
 
-    private void AssignTasksToCollectors(List<Resource> availableResources)
+    private void AssignTasksToCollectors(IReadOnlyList<Resource> availableResources)
     {
-        for (int i = 0; i < _collectors.Length; i++)
+        for (int i = 0; i < _collectors.Count; i++)
         {
             if (_collectors[i].IsBusy)
                 continue;
@@ -32,16 +32,23 @@ public class DistributorResources : MonoBehaviour
         }
     }
 
-    private void AssignTaskToCollector(Collector collector, List<Resource> availableResources)
+    private void AssignTaskToCollector(Collector collector, IReadOnlyList<Resource> availableResources)
     {
         Resource selectedResource = _strategy.SelectResource(collector.transform.position,
                 availableResources);
+
+        //Debug.Log($"[Distributor] Стратегия вернула ресурс для бота {collector.name}: {selectedResource != null}");
 
         if (selectedResource != null)
         {
             collector.SetTarget(selectedResource.transform.position, selectedResource.transform);
             _resourceRepository.Reserve(selectedResource);
-            availableResources.Remove(selectedResource);
         }
+    }
+
+    public void AddBot(Collector bot)
+    {
+        _collectors.Add(bot);
+        Distribute();
     }
 }

@@ -19,4 +19,13 @@ public class Counter : MonoBehaviour, IResourceStorage
     }
 
     public int GetAmount(ResourceType type) => _resourceStorage.GetAmount(type);
+
+    public void RemoveResource(ResourceType type, int amount)
+    {
+        _resourceStorage.RemoveResource(type, amount);
+
+        int amountAfter = GetAmount(type);
+
+        Changed?.Invoke(type, amountAfter);
+    }
 }

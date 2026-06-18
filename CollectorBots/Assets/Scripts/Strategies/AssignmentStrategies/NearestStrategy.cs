@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class NearestStrategy : IResourceSelectionStrategy
 {
-    public Resource SelectResource(Vector3 collectorPosition, List<Resource> availableResources)
+    public Resource SelectResource(Vector3 collectorPosition, IReadOnlyList<Resource> availableResources)
     {
         if (availableResources == null || availableResources.Count == 0)
             return null;

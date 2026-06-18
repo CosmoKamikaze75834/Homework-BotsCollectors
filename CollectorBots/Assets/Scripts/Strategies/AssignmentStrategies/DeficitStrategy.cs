@@ -7,7 +7,7 @@ public class DeficitStrategy : IResourceSelectionStrategy
 
     public DeficitStrategy(IResourceStorage storage) => _storage = storage;
 
-    public Resource SelectResource(Vector3 collectorPosition, List<Resource> availableResources)
+    public Resource SelectResource(Vector3 collectorPosition, IReadOnlyList<Resource> availableResources)
     {
         if(availableResources == null || availableResources.Count == 0)
             return null;
@@ -24,7 +24,7 @@ public class DeficitStrategy : IResourceSelectionStrategy
         return null;
     }
 
-    private ResourceType GetMinimumResourceType(List<Resource> availableResources)
+    private ResourceType GetMinimumResourceType(IReadOnlyList<Resource> availableResources)
     {
         ResourceType type = default;
         int minValue = int.MaxValue;

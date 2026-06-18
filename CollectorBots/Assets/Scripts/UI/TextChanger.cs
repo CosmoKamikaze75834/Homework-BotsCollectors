@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class TextChanger : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI _text;
+    [SerializeField] private TextMeshPro _text;
     [SerializeField] private Counter _counter;
     [SerializeField] private ResourceType _type;
 
