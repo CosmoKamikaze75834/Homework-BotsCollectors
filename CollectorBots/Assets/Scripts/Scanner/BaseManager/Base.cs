@@ -3,12 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Renderer))]
 public class Base : MonoBehaviour
 {
     private const int TimeScanner = 10;
 
-    [SerializeField] private UnitConfig _unitConfig;//скриптбл обжект
-    [SerializeField] private BotSpawner _spawner;//создаёт бота
+    [SerializeField] private Material _defaultMaterial;
+    [SerializeField] private Material _selectedMaterial;
+
+    [SerializeField] private Flag _flag;
+
+    [SerializeField] private UnitConfig _unitConfig;
+    [SerializeField] private BotSpawner _spawner;
 
     [SerializeField] private BaseConstructionCost _baseConstruction;
 
@@ -17,13 +23,17 @@ public class Base : MonoBehaviour
     [SerializeField] private ResourcesLocator _locator;
     [SerializeField] private DistributorResources _distributor;
 
-    [SerializeField] private ResourceStorage _storage;// Для чистой работы с данными
-    [SerializeField] private Counter _counter;// Для подписки на события(например, для UI)
+    [SerializeField] private ResourceStorage _storage;
+    [SerializeField] private Counter _counter;
     [SerializeField] private CollectionPoint _collectionPoint;
 
     private WaitForSeconds _wait = new WaitForSeconds(TimeScanner);
 
     private bool _isWorking = true;
+
+    private Renderer _renderer;
+
+    private Flag _currentFlag;
 
     private void Start()
     {
@@ -31,6 +41,7 @@ public class Base : MonoBehaviour
         _locator.OnResourcesFound += HandleResourcesFound;
         _collectionPoint.ArrivedAtBase += HandleDelivery;
         _spawner.OnBotSpawned += _distributor.AddBot;
+        _renderer = GetComponent<Renderer>();
     }
 
     private void OnDisable()
@@ -65,20 +76,32 @@ public class Base : MonoBehaviour
 
     private void HandleDelivery(Collector collector, Resource resource)
     {
-        _counter.AcceptResource(resource);//ресурс учитывается базе
-        _resourceRepository.Free(resource);//ресурс теперь не зарезервирован
+        _counter.AcceptResource(resource);
+        _resourceRepository.Free(resource);
 
-        if (_unitConfig.Cost.CanAfford(_storage))//хватает ли русурсов для покупик бота?)
+        if (_unitConfig.Cost.CanAfford(_storage))
         {
-            _unitConfig.Cost.Deduct(_counter);//вычитает ресурсы
+            _unitConfig.Cost.Deduct(_counter);
             StartCoroutine(_spawner.LaunchCreateBot());
         }
 
-        if (_baseConstruction.Cost.CanAfford(_storage))//хватает ли ресурсов для постройки базы?
+        if (_baseConstruction.Cost.CanAfford(_storage))
         {
 
         }
 
-        _distributor.Distribute();//отправляем бота сразу на новую цель
+        _distributor.Distribute();
+    }
+
+    public void Select() => _renderer.material = _selectedMaterial;
+
+    public void Deselect() => _renderer.material = _defaultMaterial;
+
+    public void PlaceFlag(Vector3 position)
+    {
+        if(_currentFlag == null)
+            _currentFlag = Instantiate(_flag, position, Quaternion.identity);
+        else
+            _currentFlag.transform.position = position;
     }
 }
