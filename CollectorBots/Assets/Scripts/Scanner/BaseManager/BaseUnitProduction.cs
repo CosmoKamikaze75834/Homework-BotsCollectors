@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using UnityEngine;
 
 public class BaseUnitProduction : MonoBehaviour
@@ -7,6 +9,7 @@ public class BaseUnitProduction : MonoBehaviour
     [SerializeField] private Counter _counter;
     [SerializeField] private BotSpawner _botSpawner;
     [SerializeField] private DistributorResources _distributorResources;
+    [SerializeField] private BotProductionView _botProductionView;
 
     private int _maxBots = 5;
 
@@ -16,7 +19,16 @@ public class BaseUnitProduction : MonoBehaviour
         {
             _unitConfig.Cost.Deduct(_counter);
 
-            StartCoroutine(_botSpawner.LaunchCreateBot());
+            _botProductionView.Show();
+
+            StartCoroutine(CreateBot());
         }
+    }
+
+    private IEnumerator CreateBot()
+    {
+        yield return _botSpawner.LaunchCreateBot();
+
+        _botProductionView.Hide();
     }
 }
