@@ -7,5 +7,10 @@ public class InputHandler : MonoBehaviour
     private void Awake()
     {
         Controls = new CameraControls();
+
+        Controls.Enable();
     }
+
+    private void OnDisable() =>
+        Controls.Disable();
 }

@@ -15,8 +15,8 @@ MonoBehaviour:
   _cost:
     _resourceEntries:
     - Type: 0
-      Amount: 2
-    - Type: 0
-      Amount: 2
-    - Type: 0
       Amount: 1
+    - Type: 1
+      Amount: 0
+    - Type: 2
+      Amount: 0

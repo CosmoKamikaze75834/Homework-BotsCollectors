@@ -2,5 +2,6 @@ public enum CollectorState
 {
     Idle,
     MovingToResource,
-    MovingToBase
+    MovingToBase,
+    MovingToFlag
 }

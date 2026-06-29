@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class Collector : MonoBehaviour
@@ -13,10 +14,12 @@ public class Collector : MonoBehaviour
 
     private Vector3 _startPosition;
 
-    private Base _ownerBase;//база к которой бот усыновлен
-
     public Transform Target { get; private set; }
     public bool IsBusy { get; private set; }
+
+    private Base _ownerBase;
+
+    public event Action<Collector> ArrivedToFlag;
 
     private void Start()
     {
@@ -24,21 +27,30 @@ public class Collector : MonoBehaviour
         _strategies = _factory.InitializeStrategy();
     }
 
-    private void OnEnable() => _movement.Arrived += OnArrivedAtDestination;
+    private void OnEnable() =>
+        _movement.Arrived += OnArrivedAtDestination;
 
-    private void OnDisable() => _movement.Arrived -= OnArrivedAtDestination;
+    private void OnDisable() =>
+        _movement.Arrived -= OnArrivedAtDestination;
 
-    public void SetTarget(Vector3 targetPosition, Transform target)
+    private void Send(Vector3 targetPosition, Transform target, CollectorState state)
     {
         if (IsBusy)
             return;
 
         Target = target;
-        _state = CollectorState.MovingToResource;
         IsBusy = true;
+        _state = state;
 
         _movement.SetDestination(targetPosition);
     }
+
+    public void SetTarget(Vector3 targetPosition, Transform target) =>
+        Send(targetPosition, target, CollectorState.MovingToResource);
+
+
+    public void SendToFlag(Vector3 targetPosition, Transform target) =>
+        Send(targetPosition, target, CollectorState.MovingToFlag);
 
     public void OnArrivedAtDestination()
     {
@@ -48,27 +60,15 @@ public class Collector : MonoBehaviour
                 break;
 
             case CollectorState.MovingToResource:
-                _strategies.Collect(this);
-                _state = CollectorState.MovingToBase;
-                _movement.SetDestination(_startPosition);
+                HandleResourceArrival();
                 break;
 
             case CollectorState.MovingToBase:
-                Resource deliveredResource = null;
+                HandleBaseArrival();
+                break;
 
-                if (Target != null)
-                    Target.TryGetComponent(out deliveredResource);
-
-                if (deliveredResource != null)
-                {
-                    _cargoHandler.DetachResource();
-                    deliveredResource.InvokeDisappearedEvent();
-                    _collectionPoint.AcceptDelivery(this, deliveredResource);
-                }
-
-                _state = CollectorState.Idle;
-                IsBusy = false;
-                Target = null;
+            case CollectorState.MovingToFlag:
+                HandleFlagArrival();
                 break;
         }
     }
@@ -79,5 +79,48 @@ public class Collector : MonoBehaviour
 
     public void Resume() => _movement.Resume();
 
-    public void SetOwner(Base ownerBase) => _ownerBase = ownerBase;
+    private void SetIdle()
+    {
+        _state = CollectorState.Idle;
+        IsBusy = false;
+        Target = null;
+    }
+    private void HandleResourceArrival()
+    {
+        _strategies.Collect(this);
+        _state = CollectorState.MovingToBase;
+        _movement.SetDestination(_startPosition);
+    }
+
+    private void HandleBaseArrival()
+    {
+        Resource deliveredResource = null;
+
+        if (Target != null)
+            Target.TryGetComponent(out deliveredResource);
+
+        if (deliveredResource != null)
+        {
+            _cargoHandler.DetachResource();
+            deliveredResource.InvokeDisappearedEvent();
+            _collectionPoint.AcceptDelivery(this, deliveredResource);
+        }
+
+        SetIdle();
+    }
+
+    private void HandleFlagArrival()
+    {
+        SetIdle();
+        ArrivedToFlag?.Invoke(this);
+    }
+
+    public void SetBase(Base currentbase) =>
+        _ownerBase = currentbase;
+
+    public void SetPoint(CollectionPoint collectionPoint) =>
+        _collectionPoint = collectionPoint;
+
+    public void SetStartPosition(Vector3 startPosition) =>
+        _startPosition = startPosition;
 }

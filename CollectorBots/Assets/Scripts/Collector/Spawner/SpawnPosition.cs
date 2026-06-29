@@ -1,8 +1,8 @@
 using UnityEngine;
 
-public class SpawnPosition:MonoBehaviour
+public class SpawnPosition : MonoBehaviour
 {
-    [SerializeField] private float _step = 1f;
+    private float _step = 1f;
 
     private int _counter = 0;
 

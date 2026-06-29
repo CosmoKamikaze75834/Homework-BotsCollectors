@@ -9,7 +9,8 @@ public class DistributorResources : MonoBehaviour
 
     private IResourceSelectionStrategy _strategy;
 
-    private void Start() => _strategy = _strategyFactory.InitializeStrategy();
+    private void Start() => 
+        _strategy = _strategyFactory.InitializeStrategy();
 
     public void Distribute()
     {
@@ -37,8 +38,6 @@ public class DistributorResources : MonoBehaviour
         Resource selectedResource = _strategy.SelectResource(collector.transform.position,
                 availableResources);
 
-        //Debug.Log($"[Distributor] Стратегия вернула ресурс для бота {collector.name}: {selectedResource != null}");
-
         if (selectedResource != null)
         {
             collector.SetTarget(selectedResource.transform.position, selectedResource.transform);
@@ -51,4 +50,31 @@ public class DistributorResources : MonoBehaviour
         _collectors.Add(bot);
         Distribute();
     }
+
+    public void DeleteBot(Collector bot)
+    {
+        _collectors.Remove(bot);
+        bot = null;
+    }
+
+    public List<Collector> SetListFreeBots()
+    {
+        List<Collector> freeCollector = new List<Collector>();
+
+        for (int i = 0; i < _collectors.Count; i++)
+        {
+            if (_collectors[i].IsBusy)
+                continue;
+
+            freeCollector.Add(_collectors[i]);
+        }
+
+        return freeCollector;
+    }
+
+    public bool BotsLeft() => 
+        _collectors.Count > 1;
+
+    public int Count => 
+        _collectors.Count;
 }

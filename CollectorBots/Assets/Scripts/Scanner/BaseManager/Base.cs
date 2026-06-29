@@ -1,54 +1,62 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Renderer))]
 public class Base : MonoBehaviour
 {
     private const int TimeScanner = 10;
 
-    [SerializeField] private Material _defaultMaterial;
-    [SerializeField] private Material _selectedMaterial;
+    [SerializeField] private BaseColonization _colonization;//процесс колонизации базы
+    [SerializeField] private BaseUnitProduction _unitProduction;//запускает процесс создания ботов
 
-    [SerializeField] private Flag _flag;
+    [SerializeField] private MarkerController _marker;//отвечает за логику маркера
 
-    [SerializeField] private UnitConfig _unitConfig;
-    [SerializeField] private BotSpawner _spawner;
+    [SerializeField] private FlagPlacer _flagPlacer;//устанавливает флаг
+    [SerializeField] private BaseSelectionView _selectionView;//меняет цвет базы
 
-    [SerializeField] private BaseConstructionCost _baseConstruction;
+    [SerializeField] private BotSpawner _botSpawner;//спавнит ботов
 
-    [SerializeField] private Scanner _scanner;
-    [SerializeField] private ResourceRepository _resourceRepository;
-    [SerializeField] private ResourcesLocator _locator;
-    [SerializeField] private DistributorResources _distributor;
+    [SerializeField] private Scanner _scanner;//визуальный сканер
+    [SerializeField] private ResourceRepository _resourceRepository;//содержит списки ресурсов и работает с ними
+    [SerializeField] private ResourcesLocator _locator;//ищет ресурсы в радиусе
+    [SerializeField] private DistributorResources _distributor;//распределяет ресурсы среди ботов
 
-    [SerializeField] private ResourceStorage _storage;
-    [SerializeField] private Counter _counter;
-    [SerializeField] private CollectionPoint _collectionPoint;
+    [SerializeField] private Counter _counter;//визуальный счётчик
+    [SerializeField] private CollectionPoint _collectionPoint;//точка бота
+
+    [SerializeField] private PlacementArea _flagInstallationBoundaries;
 
     private WaitForSeconds _wait = new WaitForSeconds(TimeScanner);
 
+    public DistributorResources DistributorResources => _distributor;
+    public BaseSelectionView BaseSelectionView => _selectionView;
+    public PlacementArea FlagInstallationBoundaries => _flagInstallationBoundaries;
+    public FlagPlacer FlagPlacer => _flagPlacer;
+    public CollectionPoint CollectionPoint => _collectionPoint;
+
+
+    public MarkerController MarkerController => _marker;
+
     private bool _isWorking = true;
 
-    private Renderer _renderer;
-
-    private Flag _currentFlag;
 
     private void Start()
     {
         StartCoroutine(ScanCycle());
+        _colonization.BuilderTransferred += _distributor.DeleteBot;
         _locator.OnResourcesFound += HandleResourcesFound;
         _collectionPoint.ArrivedAtBase += HandleDelivery;
-        _spawner.OnBotSpawned += _distributor.AddBot;
-        _renderer = GetComponent<Renderer>();
+        _botSpawner.OnBotSpawned += HandleBotSpawned;
+        _flagPlacer.FlagInstalled += _selectionView.Deselect;
     }
 
     private void OnDisable()
     {
+        _colonization.BuilderTransferred -= _distributor.DeleteBot;
         _locator.OnResourcesFound -= HandleResourcesFound;
         _collectionPoint.ArrivedAtBase -= HandleDelivery;
-        _spawner.OnBotSpawned -= _distributor.AddBot;
+        _botSpawner.OnBotSpawned -= HandleBotSpawned;
+        _flagPlacer.FlagInstalled -= _selectionView.Deselect;
     }
 
     private IEnumerator ScanCycle()
@@ -79,29 +87,26 @@ public class Base : MonoBehaviour
         _counter.AcceptResource(resource);
         _resourceRepository.Free(resource);
 
-        if (_unitConfig.Cost.CanAfford(_storage))
+        if (_colonization.FlagPlacer.HasFlag())
         {
-            _unitConfig.Cost.Deduct(_counter);
-            StartCoroutine(_spawner.LaunchCreateBot());
-        }
+            List<Collector> collectors = _distributor.SetListFreeBots();
 
-        if (_baseConstruction.Cost.CanAfford(_storage))
-        {
+            if (collectors.Count > 0 && _distributor.BotsLeft())
+            {
+                Collector builder = collectors[0];
 
+                _colonization.SendBotToFlag(builder);
+            }
         }
+        else
+            _unitProduction.TryCreateBot();
 
         _distributor.Distribute();
     }
 
-    public void Select() => _renderer.material = _selectedMaterial;
-
-    public void Deselect() => _renderer.material = _defaultMaterial;
-
-    public void PlaceFlag(Vector3 position)
+    private void HandleBotSpawned(Collector bot)
     {
-        if(_currentFlag == null)
-            _currentFlag = Instantiate(_flag, position, Quaternion.identity);
-        else
-            _currentFlag.transform.position = position;
+        bot.SetPoint(_collectionPoint);
+        _distributor.AddBot(bot);
     }
 }
