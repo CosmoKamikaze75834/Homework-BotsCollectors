@@ -6,7 +6,6 @@ public class BaseSpawner : GeneralSpawner
 {
     [SerializeField] private Base _base;
     [SerializeField] private float _shift;
-    [SerializeField] private FlagPlacementValidator _blockChecker;
 
     public event Action<Base> OnBaseSpawned;
 
@@ -14,16 +13,14 @@ public class BaseSpawner : GeneralSpawner
     {
         Vector3 position = spawnPoint.position + transform.forward * _shift;
 
-        yield return LaunchCreate(position);
+        yield return LaunchCreate();
 
         Base newBase = Create(position);
-
-        _blockChecker.AddZone(newBase.FlagInstallationBoundaries);
     }
 
     private Base Create(Vector3 finalPosition)
     {
-        Base newBase = Instantiate(_base, finalPosition, Quaternion.identity, SpawnContainer);
+        Base newBase = Instantiate(_base, finalPosition, Quaternion.identity);
 
         OnBaseSpawned?.Invoke(newBase);
 

@@ -5,7 +5,7 @@ using UnityEngine;
 public class ResourcesLocator : MonoBehaviour
 {
     [SerializeField] private LayerMask _resourceLayer;
-    [SerializeField] private float _detectionRadius;
+    [SerializeField] private float _detectionRadius = 13f;
 
     private List<Resource> _resources = new List<Resource>();
 

@@ -28,7 +28,7 @@ public class DelayedPickupStrategy : IResourceCollectionStrategy
 
         if (targetResourceTransform != null)
         {
-            collector.AttempToPickupCurrentResource();
+            collector.AttemptToPickupCurrentResource();
             collector.Resume();
         }
 

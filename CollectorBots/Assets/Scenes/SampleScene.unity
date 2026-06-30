@@ -171,11 +171,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &87736888 stripped
-BoxCollider:
-  m_CorrespondingSourceObject: {fileID: 5197657944517046385, guid: a3569d796004ac34e9f15557226d543e, type: 3}
-  m_PrefabInstance: {fileID: 7564593890863800938}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &201375318
 GameObject:
   m_ObjectHideFlags: 0
@@ -811,7 +806,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _spawnAreaCollider: {fileID: 1036898698}
-  _excludedAreaCollider: {fileID: 87736888}
+  _placementValidator: {fileID: 1917008181}
   _height: 0.2
 --- !u!114 &960292441
 MonoBehaviour:
@@ -1054,8 +1049,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 39.983116, y: 1, z: 40.525814}
-  m_Center: {x: 1.0911283, y: 0, z: -1.1888561}
+  m_Size: {x: 69.23251, y: 1, z: 40.525814}
+  m_Center: {x: 0.6444702, y: 0, z: -1.1888561}
 --- !u!4 &1036898699
 Transform:
   m_ObjectHideFlags: 0
@@ -1065,7 +1060,7 @@ Transform:
   m_GameObject: {fileID: 1036898697}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 18.6, y: -1.94, z: 5.35}
+  m_LocalPosition: {x: 17.31, y: -1.94, z: 5.35}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1866,7 +1861,7 @@ GameObject:
   - component: {fileID: 1670441479}
   - component: {fileID: 1670441481}
   m_Layer: 0
-  m_Name: FlagInstallationBoundaries
+  m_Name: FlagPlacementArea
   m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1891,8 +1886,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 53.500076, y: 1, z: 27.470592}
-  m_Center: {x: 19.752823, y: 0, z: 4.7135544}
+  m_Size: {x: 58.838722, y: 1, z: 30.825434}
+  m_Center: {x: 19.083153, y: 0, z: 3.0361338}
 --- !u!4 &1670441480
 Transform:
   m_ObjectHideFlags: 0
@@ -1921,17 +1916,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _placement: {fileID: 1670441479}
---- !u!114 &1731436601 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4132363300709414878, guid: a3569d796004ac34e9f15557226d543e, type: 3}
-  m_PrefabInstance: {fileID: 7564593890863800938}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 04d94f90de4351e4e86bc6fc619e12b8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1917008179
 GameObject:
   m_ObjectHideFlags: 0
@@ -1976,8 +1960,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0200006f396b3fd4dbd78bb68fc296ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _blockZones:
-  - {fileID: 1731436601}
   _flagPlacementArea: {fileID: 1670441481}
 --- !u!4 &1954336990 stripped
 Transform:
@@ -2370,6 +2352,10 @@ PrefabInstance:
       propertyPath: _flagPlacementController
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 1968732165414174130, guid: a3569d796004ac34e9f15557226d543e, type: 3}
+      propertyPath: _detectionRadius
+      value: 13.2
+      objectReference: {fileID: 0}
     - target: {fileID: 2053306769155280479, guid: a3569d796004ac34e9f15557226d543e, type: 3}
       propertyPath: _collectors.Array.size
       value: 0
@@ -2390,6 +2376,10 @@ PrefabInstance:
       propertyPath: _collectors.Array.data[3]
       value: 
       objectReference: {fileID: 1393684450}
+    - target: {fileID: 2563879563792043646, guid: a3569d796004ac34e9f15557226d543e, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 6.999939
+      objectReference: {fileID: 0}
     - target: {fileID: 3668532015215254956, guid: a3569d796004ac34e9f15557226d543e, type: 3}
       propertyPath: _flagPlacer
       value: 
@@ -2405,7 +2395,7 @@ PrefabInstance:
     - target: {fileID: 3668532015215254956, guid: a3569d796004ac34e9f15557226d543e, type: 3}
       propertyPath: _flagInstallationBoundaries
       value: 
-      objectReference: {fileID: 1731436601}
+      objectReference: {fileID: 0}
     - target: {fileID: 5464712250141594408, guid: a3569d796004ac34e9f15557226d543e, type: 3}
       propertyPath: _markerController
       value: 
@@ -2413,6 +2403,10 @@ PrefabInstance:
     - target: {fileID: 5464712250141594408, guid: a3569d796004ac34e9f15557226d543e, type: 3}
       propertyPath: _flagPlacementController
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5631847786237694516, guid: a3569d796004ac34e9f15557226d543e, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 4.7999268
       objectReference: {fileID: 0}
     - target: {fileID: 7926190567220681627, guid: a3569d796004ac34e9f15557226d543e, type: 3}
       propertyPath: SpawnContainer
@@ -2468,7 +2462,8 @@ PrefabInstance:
       objectReference: {fileID: 7564593890863800946}
     m_RemovedComponents:
     - {fileID: 4100562782048542350, guid: a3569d796004ac34e9f15557226d543e, type: 3}
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 5517892757851621417, guid: a3569d796004ac34e9f15557226d543e, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 4753480774463807881, guid: a3569d796004ac34e9f15557226d543e, type: 3}
@@ -2478,6 +2473,9 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 0}
     - targetCorrespondingSourceObject: {fileID: 1525983399863335453, guid: a3569d796004ac34e9f15557226d543e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 2155304588251814098, guid: a3569d796004ac34e9f15557226d543e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: a3569d796004ac34e9f15557226d543e, type: 3}

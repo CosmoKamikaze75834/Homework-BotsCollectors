@@ -14,14 +14,14 @@ public class BotSpawner : GeneralSpawner
     {
         Vector3 position = _spawnPosition.GetNextPosition(_spawnPoint);
 
-        yield return LaunchCreate(position);
+        yield return LaunchCreate();
 
         Collector newBot = Create(position);
     }
 
     private Collector Create(Vector3 finalPosition)
     {
-        Collector bot = Instantiate(_bot, finalPosition, _spawnPoint.rotation, SpawnContainer);
+        Collector bot = Instantiate(_bot, finalPosition, _spawnPoint.rotation);
 
         OnBotSpawned?.Invoke(bot);
 

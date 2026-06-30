@@ -8,7 +8,7 @@ public class BaseSelector : MonoBehaviour
     [SerializeField] private RaycastHandler _raycast;
     [SerializeField] private FlagPlacementValidator _placementValidator;
 
-    private Base _selectedBase;
+    private BaseConstructionSender _selectedBase;
 
     private void OnEnable()
     {
@@ -34,35 +34,32 @@ public class BaseSelector : MonoBehaviour
     private bool CheckGround(RaycastHit hit) =>
         hit.collider.CompareTag(NameGround);
 
-    //перемещаем мышкой по уровню
     private void ProcessMouseMove(RaycastHit hit)
     {
-        if (_selectedBase == null)//база выбрана
+        if (_selectedBase == null)
             return;
 
-        if (CheckGround(hit) && _placementValidator.CanPlace(hit.point))//на земле и в безопасной зоне
-            _selectedBase.MarkerController.MoveMarker(hit.point);//передвигаем маркер если он есть
+        if (CheckGround(hit) && _placementValidator.CanPlace(hit.point))
+            _selectedBase.MoveMarker(hit.point);
     }
 
-    //логика клика по земле
     private void PlaceFlag()
     {
         if (_selectedBase == null)
             return;
 
-        Vector3? position = _selectedBase.MarkerController.GetMarkerPosition();//если установлен маркер
+        Vector3? position = _selectedBase.GetMarkerPosition();
 
         if (position != null)
-            _selectedBase.FlagPlacer.PlaceFlag(position.Value);//ставим флаг
+            _selectedBase.PlaceFlag(position.Value);
     }
 
-    //логика выбора базы
     private void SelectBase(RaycastHit hit)
     {
-        if (hit.collider.gameObject.TryGetComponent(out Base component) == false)
+        if (hit.collider.gameObject.TryGetComponent(out BaseConstructionSender component) == false)
             return;
 
-        if (component.FlagPlacer.HasFlag())
+        if (component.HasFlag())
             return;
 
         if (_selectedBase != null && _selectedBase != component)
@@ -76,15 +73,15 @@ public class BaseSelector : MonoBehaviour
 
     private void DeselectBase()
     {
-        _selectedBase.BaseSelectionView.Deselect();
-        _selectedBase.MarkerController.DestroyMarker();
+        _selectedBase.Deselect();
+        _selectedBase.DestroyMarker();
         _selectedBase = null;
     }
 
-    private void ApplySelection(Base component, RaycastHit hit)
+    private void ApplySelection(BaseConstructionSender component, RaycastHit hit)
     {
         _selectedBase = component;
-        component.BaseSelectionView.Select();
-        component.MarkerController.CreateMarker(hit.point);
+        _selectedBase.Select(DeselectBase);
+        _selectedBase.CreateMarker(hit.point);
     }
 }

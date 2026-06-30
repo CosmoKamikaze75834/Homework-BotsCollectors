@@ -1,6 +1,6 @@
 public interface IResourceStorage
 {
-    int GetAmount(ResourceType type);//получить текущее количество ресурсов
+    int GetAmount(ResourceType type);
 
-    void RemoveResource(ResourceType type, int amount);//списать ресурсы
+    void RemoveResource(ResourceType type, int amount);
 }

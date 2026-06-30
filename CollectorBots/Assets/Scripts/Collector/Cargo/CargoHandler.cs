@@ -21,7 +21,7 @@ public class CargoHandler : MonoBehaviour
 
     public void DetachResource()
     {
-        if(_targetTransform != null)
+        if (_targetTransform != null)
         {
             _targetTransform.SetParent(null);
             _targetTransform = null;

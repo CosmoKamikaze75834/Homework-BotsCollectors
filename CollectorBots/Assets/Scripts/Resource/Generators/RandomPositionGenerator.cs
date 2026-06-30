@@ -3,7 +3,7 @@ using UnityEngine;
 public class RandomPositionGenerator : MonoBehaviour
 {
     [SerializeField] private BoxCollider _spawnAreaCollider;
-    [SerializeField] private BoxCollider _excludedAreaCollider;
+    [SerializeField] private FlagPlacementValidator _placementValidator;
     [SerializeField] private float _height;
 
     private int _maxAttempts = 10;
@@ -20,7 +20,7 @@ public class RandomPositionGenerator : MonoBehaviour
 
             candidatePosition = new Vector3(x, _height, z);
 
-            if (_excludedAreaCollider != null && _excludedAreaCollider.bounds.Contains(candidatePosition))
+            if (_placementValidator.IsBlocked(candidatePosition))
                 continue;
 
             return candidatePosition;

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-//расходы ресурса
 [Serializable]
 public class ResourceCost
 {
@@ -21,21 +20,19 @@ public class ResourceCost
         }
     }
 
-    //хватает ли накопленных ресурсов для постойки бота
     public bool CanAfford(IResourceStorage storage)
     {
         foreach (var item in _resourceDictionary)
         {
-            int currentAmount = storage.GetAmount(item.Key);//Сколько у хранилища есть ресурсов этого типа
+            int currentAmount = storage.GetAmount(item.Key);
 
-            if (currentAmount < item.Value)//если в хранилище меньше чем нам нужно
+            if (currentAmount < item.Value)
                 return false;
         }
 
         return true;
     }
 
-    //списать реусры определённого типа и количества
     public void Deduct(IResourceStorage storage)
     {
         foreach (var item in _resourceDictionary)

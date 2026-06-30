@@ -6,39 +6,32 @@ public class Base : MonoBehaviour
 {
     private const int TimeScanner = 10;
 
-    [SerializeField] private BaseColonization _colonization;//процесс колонизации базы
-    [SerializeField] private BaseUnitProduction _unitProduction;//запускает процесс создания ботов
+    [SerializeField] private BaseConstructionSender _constructionSender;
 
-    [SerializeField] private MarkerController _marker;//отвечает за логику маркера
+    [SerializeField] private BaseColonization _colonization;
+    [SerializeField] private BaseUnitProduction _unitProduction;
 
-    [SerializeField] private FlagPlacer _flagPlacer;//устанавливает флаг
-    [SerializeField] private BaseSelectionView _selectionView;//меняет цвет базы
+    [SerializeField] private MarkerController _marker;
 
-    [SerializeField] private BotSpawner _botSpawner;//спавнит ботов
+    [SerializeField] private FlagPlacer _flagPlacer;
+    [SerializeField] private BaseSelectionView _selectionView;
 
-    [SerializeField] private Scanner _scanner;//визуальный сканер
-    [SerializeField] private ResourceRepository _resourceRepository;//содержит списки ресурсов и работает с ними
-    [SerializeField] private ResourcesLocator _locator;//ищет ресурсы в радиусе
-    [SerializeField] private DistributorResources _distributor;//распределяет ресурсы среди ботов
+    [SerializeField] private BotSpawner _botSpawner;
 
-    [SerializeField] private Counter _counter;//визуальный счётчик
-    [SerializeField] private CollectionPoint _collectionPoint;//точка бота
+    [SerializeField] private Scanner _scanner;
+    [SerializeField] private ResourceRepository _resourceRepository;
+    [SerializeField] private ResourcesLocator _locator;
+    [SerializeField] private DistributorResources _distributor;
 
-    [SerializeField] private PlacementArea _flagInstallationBoundaries;
+    [SerializeField] private Counter _counter;
+    [SerializeField] private CollectionPoint _collectionPoint;
 
     private WaitForSeconds _wait = new WaitForSeconds(TimeScanner);
 
     public DistributorResources DistributorResources => _distributor;
-    public BaseSelectionView BaseSelectionView => _selectionView;
-    public PlacementArea FlagInstallationBoundaries => _flagInstallationBoundaries;
-    public FlagPlacer FlagPlacer => _flagPlacer;
     public CollectionPoint CollectionPoint => _collectionPoint;
 
-
-    public MarkerController MarkerController => _marker;
-
     private bool _isWorking = true;
-
 
     private void Start()
     {
@@ -95,7 +88,7 @@ public class Base : MonoBehaviour
             {
                 Collector builder = collectors[0];
 
-                _colonization.SendBotToFlag(builder);
+                _constructionSender.SendBotToFlag(builder);
             }
         }
         else

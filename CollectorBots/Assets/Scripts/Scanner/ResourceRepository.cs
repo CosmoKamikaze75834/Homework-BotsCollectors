@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -29,7 +30,21 @@ public class ResourceRepository : MonoBehaviour
     {
         _availableResources.Remove(resource);
         _reservedResources.Add(resource);
+
+        ResourceRepository[] repositories = FindObjectsByType<ResourceRepository>(FindObjectsSortMode.None);
+
+        foreach (ResourceRepository repository in repositories)
+        {
+            if (repository == this)
+                continue;
+
+            repository.Remove(resource);
+        }
     }
 
-    public void Free(Resource resource) => _reservedResources.Remove(resource);
+    public void Free(Resource resource) => 
+        _reservedResources.Remove(resource);
+
+    public void Remove(Resource resource) =>
+        _availableResources.Remove(resource);
 }

@@ -4,36 +4,39 @@ public class MarkerController : MonoBehaviour
 {
     [SerializeField] private Marker _marker;
 
-    private Marker _placementMarker;
+    private Marker _currentMarker;
 
     public Vector3? GetMarkerPosition()
     {
-        if (_placementMarker == null)
+        if (HasMarker() == false)
             return null;
 
-        return _placementMarker.transform.position;
+        return _currentMarker.transform.position;
     }
 
     public void MoveMarker(Vector3 position)
     {
-        if (_placementMarker == null)
+        if (HasMarker() == false)
             return;
 
-        _placementMarker.transform.position = position;
+        _currentMarker.transform.position = position;
     }
 
     public void CreateMarker(Vector3 position)
     {
-        if (_placementMarker == null)
-            _placementMarker = Instantiate(_marker, position, Quaternion.identity);
+        if (HasMarker() == false)
+            _currentMarker = Instantiate(_marker, position, Quaternion.identity);
     }
 
     public void DestroyMarker()
     {
-        if (_placementMarker != null)
+        if (HasMarker())
         {
-            Destroy(_placementMarker.gameObject);
-            _placementMarker = null;
+            Destroy(_currentMarker.gameObject);
+            _currentMarker = null;
         }
     }
+
+    private bool HasMarker() =>
+        _currentMarker != null;
 }

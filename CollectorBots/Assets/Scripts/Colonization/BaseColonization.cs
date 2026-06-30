@@ -15,16 +15,15 @@ public class BaseColonization : MonoBehaviour
     private Collector _builder;
     private bool _builderSent;
 
-    public event Action<Collector> BuilderTransferred;
-
     public FlagPlacer FlagPlacer => _flagPlacer;
 
-    private void Start() =>
+    public event Action<Collector> BuilderTransferred;
+
+    private void OnEnable() =>
         _baseSpawner.OnBaseSpawned += OnBaseSpawned;
 
-    private void OnDisable() => 
+    private void OnDisable() =>
         _baseSpawner.OnBaseSpawned -= OnBaseSpawned;
-
 
     public void HandleBuilderArrived(Collector collector)
     {
@@ -47,10 +46,10 @@ public class BaseColonization : MonoBehaviour
         _builder.SetStartPosition(_builder.transform.position);
     }
 
-    public void SendBotToFlag(Collector collector)
+    public bool TrySendBotToFlag(Collector collector)
     {
         if (CanSendBuilder() == false)
-            return;
+            return false;
 
         _builderSent = true;
         _builder = collector;
@@ -61,20 +60,16 @@ public class BaseColonization : MonoBehaviour
         _markerController.DestroyMarker();
 
         _builder.ArrivedToFlag += HandleBuilderArrived;
+
+        return true;
     }
 
-    private bool CanSendBuilder()
-    {
-        return _baseConstruction.Cost.CanAfford(_storage) &&
+    private bool CanSendBuilder() =>
+        _baseConstruction.Cost.CanAfford(_storage) &&
            _builderSent == false;
-    }
 
-    private void CreateNewBase(Collector collector)
-    {
-        StartCoroutine(
-            _baseSpawner.LaunchCreateBase(
-                collector.transform));
-    }
+    private void CreateNewBase(Collector collector) =>
+        StartCoroutine(_baseSpawner.LaunchCreateBase(collector.transform));
 
     private void CompleteColonization(Collector collector)
     {

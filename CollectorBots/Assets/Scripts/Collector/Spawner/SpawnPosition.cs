@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class SpawnPosition : MonoBehaviour
 {
-    private float _step = 1f;
+    private float _step = 1.5f;
 
     private int _counter = 0;
 
@@ -13,6 +13,6 @@ public class SpawnPosition : MonoBehaviour
 
         _counter++;
 
-        return  basePosition + offset;
+        return basePosition + offset;
     }
 }

@@ -11,7 +11,8 @@ public class CollectorMovement : MonoBehaviour
 
     public event Action Arrived;
 
-    private void Awake() => _agent = GetComponent<NavMeshAgent>();
+    private void Awake() => 
+        _agent = GetComponent<NavMeshAgent>();
 
     private void Update()
     {
@@ -31,7 +32,9 @@ public class CollectorMovement : MonoBehaviour
         _isArrived = false;
     }
 
-    public void Stop() => _agent.isStopped = true;
+    public void Stop() => 
+        _agent.isStopped = true;
 
-    public void Resume() => _agent.isStopped = false;
+    public void Resume() => 
+        _agent.isStopped = false;
 }
